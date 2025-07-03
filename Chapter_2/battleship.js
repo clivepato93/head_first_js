@@ -1,6 +1,6 @@
-const location1 = 3;
-const location2 = 4;
-const location3 = 5;
+const location1 = Math.floor(Math.random()*5);
+const location2 = location1+1;
+const location3 = location2+1;
 const successfulStrikes = [];
 
 let guesses = 0;
@@ -17,7 +17,7 @@ while (!sunk) {
 		(guess == location3 && !successfulStrikes.includes(guess))
 	) {
 		hits -= 1;
-        if(!hits){
+        if(hits){
             alert(`Target hit, ${hits} more hit${hits > 1 ? "s" : ""} to go!`);
         }
 		successfulStrikes.push(guess);
