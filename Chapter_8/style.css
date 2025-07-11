@@ -1,0 +1,38 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color:black;
+    height:100vh;
+    width:100%;
+    display: flex;
+    justify-content:center ;
+}
+
+#board{
+    position: relative;
+    width:1024px;
+    height:863px;
+    margin: auto;
+    background: url(./board.jpg) no-repeat;
+}
+
+.grid{
+    display: grid;
+    border: 1px solid pink;
+    width: 66%;
+    height: 78%;
+    grid-template-columns: repeat(7,1fr);
+    grid-template-rows: repeat(7,1fr);
+    position: absolute;
+    top:98px;
+    left:170px;
+
+}
+
+.cell{
+    
+}
