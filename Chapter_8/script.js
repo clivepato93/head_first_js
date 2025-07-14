@@ -1,4 +1,19 @@
 // generate cells instead of doing via html
+// 0 5 4
+[
+    [
+        2,
+        4
+    ],
+    [
+        3,
+        5
+    ],
+    [
+        4,
+        6
+    ]
+]
 
 const obj = {
   A: 0,
@@ -61,24 +76,66 @@ const view = {
   }
 };
 
+function positionTaken(position){
+  console.log(`testing if ${position} is taken`)
+  if(ship.find((val) => val.location.includes(position))){
+console.log(`cell ${position} is taken`)
+return true
+  }
+  return false
+}
+
 function generateLocations(orientation, row, column) {
-  if (ship.find((val) => val.location.includes(`${row}${column}`))) {
+  if (positionTaken(`${row}${column}`)) {
+    console.log('recursive time '+ [orientation,row,column])
     generateLocations(
-      Number(!orientation),
+      Math.floor(Math.random()*2),
       Math.floor(Math.random() * 7),
       Math.floor(Math.random() * 7)
     );
-  } else {
+  } 
+  else {
+    if(orientation){
+      // const possiblePositions = [column-2 >=0 && !positionTaken(`${row}${column-2}`) && !positionTaken(`${row}${column-1}`)? column-2:null,column-1 >=0 && !positionTaken(`${row}${column-1}`)? row-1:null,column]
+                  const possiblePositions = [row-2 >=0 && !positionTaken(`${row-2}${column}`)&& !positionTaken(`${row-1}${column}`)? [row-2,row]:null,row-1 >=0 && !positionTaken(`${row-1}${column}`)&& !positionTaken(`${row+1}${column}`)? [row-1,row+1]:null,row+2 <=6 && !positionTaken(`${row+1}${column}`)&& !positionTaken(`${row+2}${column}`)? [row,row+2]:null]
+
+      console.log(possiblePositions)
+    }
+    else{
+            const possiblePositions = [column-2 >=0 && !positionTaken(`${row}${column-2}`)&& !positionTaken(`${row}${column-1}`)? [column-2,column]:null,column-1 >=0 && !positionTaken(`${row}${column-1}`)&& !positionTaken(`${row}${column+1}`)? [column-1,column+1]:null,column+2 <=6 && !positionTaken(`${row}${column+1}`)&& !positionTaken(`${row}${column+2}`)? [column,column+2]:null]
+
+      // const possiblePositions = [column-2 >=0 && !positionTaken(`${row}${column-2}`)&& !positionTaken(`${row}${column-1}`)? [column-2,column]:null,column-1 >=0 && !positionTaken(`${row}${column-1}`) && !positionTaken(`${row}${column+1}`)? [column-1,column+1]:null,row]
+      console.log(possiblePositions)
+    }
+ 
   }
 
-  console.log(row, column, orientation);
+  console.log(orientation,row,column);
 }
 
 // generateLocations(
 //   Math.floor(Math.random() * 2),
+//   2,
+//   6
+// );
+// generateLocations(
+//   0,
 //   Math.floor(Math.random() * 7),
 //   Math.floor(Math.random() * 7)
 // );
+
+// generateLocations(
+//  1,
+//  4,
+//   6
+// );
+
+
+generateLocations(
+  Math.floor(Math.random() * 2),
+  Math.floor(Math.random() * 7),
+  Math.floor(Math.random() * 7)
+);
 
 function checkInput(input){
     const letterCheck = /^[A-Z][0-6]$/ig.test(input)

@@ -22,7 +22,6 @@ body {
 
 .grid {
   display: grid;
-  border: 1px solid pink;
   width: 66%;
   height: 78%;
   grid-template-columns: repeat(7, 1fr);
@@ -33,11 +32,11 @@ body {
 }
 
 .hit{
-  background: url(/ship.png) no-repeat center center;
+  background: url(./ship.png) no-repeat center center;
 }
 
 .miss{
-  background: url(/miss.png) no-repeat center center;
+  background: url(./miss.png) no-repeat center center;
 }
 
 
