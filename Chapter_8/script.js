@@ -21,58 +21,57 @@ const ship = {
   checkPositionIsTaken(position) {
     return !!this.positionTaken[position];
   },
+  checkValidCell(row, column) {
+    return row >= 0 && row <= 6 && column >= 0 && column <= 6;
+  },
   generatePositions(orientation, row, column) {
     let possiblePositions = [];
+    for (let i = 0; i <= 2; i++) {
+      const values = [];
+      for (let j = i - 2; j <= i; j++) {
+        if (
+          orientation &&
+          j < 0 &&
+          ship.checkValidCell(row - Math.abs(j), column) &&
+          !ship.checkPositionIsTaken(`${row - Math.abs(j)}${column}`)
+        ){
 
-    if (orientation) {
-      if (
-        row - 2 >= 0 &&
-        !ship.checkPositionIsTaken(`${row - 2}${column}`) &&
-        !ship.checkPositionIsTaken(`${row - 1}${column}`)
-      ) {
-        possiblePositions.push([row - 2, row]);
-      }
-      if (
-        row - 1 >= 0 &&
-        row + 1 <= 6 &&
-        !ship.checkPositionIsTaken(`${row - 1}${column}`) &&
-        !ship.checkPositionIsTaken(`${row + 1}${column}`)
-      ) {
-        possiblePositions.push([row - 1, row + 1]);
-      }
+          values.push(row - Math.abs(j));
+        }
+        else if (
+          orientation &&
+          j >= 0 &&
+          ship.checkValidCell(row + j, column) &&
+          !ship.checkPositionIsTaken(`${row + j}${column}`)
+        ){
 
-      if (
-        row + 2 <= 6 &&
-        !ship.checkPositionIsTaken(`${row + 1}${column}`) &&
-        !ship.checkPositionIsTaken(`${row + 2}${column}`)
-      ) {
-        possiblePositions.push([row, row + 2]);
-      }
-    } else if (!orientation) {
-      if (
-        column - 2 >= 0 &&
-        !ship.checkPositionIsTaken(`${row}${column - 2}`) &&
-        !ship.checkPositionIsTaken(`${row}${column - 1}`)
-      ) {
-        possiblePositions.push([column - 2, column]);
-      }
-      if (
-        column - 1 >= 0 &&
-        column + 1 <= 6 &&
-        !ship.checkPositionIsTaken(`${row}${column - 1}`) &&
-        !ship.checkPositionIsTaken(`${row}${column + 1}`)
-      ) {
-        possiblePositions.push([column - 1, column + 1]);
-      }
+          values.push(row + j);
+        }
+        else if (
+          !orientation &&
+          j < 0 &&
+          ship.checkValidCell(row, column - Math.abs(j)) &&
+          !ship.checkPositionIsTaken(`${row}${column - Math.abs(j)}`)
+        ){
 
-      if (
-        column + 2 <= 6 &&
-        !ship.checkPositionIsTaken(`${row}${column + 1}`) &&
-        !ship.checkPositionIsTaken(`${row}${column + 2}`)
-      ) {
-        possiblePositions.push([column, column + 2]);
+          values.push(column - Math.abs(j));
+        }
+        else if (
+          !orientation &&
+          j >= 0 &&
+          ship.checkValidCell(row, column + j) &&
+          !ship.checkPositionIsTaken(`${row}${column + j}`)
+        ){
+
+          values.push(column + j);
+        }
+        else {
+          break;
+        }
       }
+      if (values.length == 3) possiblePositions.push(values);
     }
+
     return possiblePositions.length ? possiblePositions : false;
   },
   generateLocations(shipNumber) {
@@ -80,9 +79,16 @@ const ship = {
     let row = Math.floor(Math.random() * 7);
     let column = Math.floor(Math.random() * 7);
     let attempts = 0;
-    let positions;
+    let positions = ship.generatePositions(orientation, row, column) ;
 
     for (attempts; attempts < 50; attempts++) {
+      console.log(attempts)
+      console.log({orientation,row,column,shipNumber}
+      )
+      if (!positions &&attempts == 49) {
+        alert('unable to positions ships reloading the board')
+        window.location.reload();
+      }
       if (positions) break;
       else if (ship.checkPositionIsTaken(row, column)) {
         orientation = Math.floor(Math.random() * 2);
@@ -92,24 +98,20 @@ const ship = {
         positions = ship.generatePositions(orientation, row, column);
       }
     }
-    if (attempts == 50) {
-      window.location.reload();
-    }
-    const [start, end] =
-      positions[Math.floor(Math.random() * positions.length)];
+    const choice = positions[Math.floor(Math.random() * positions.length)];
     const shipPosition = [];
-    for (let index = start; index <= end; index++) {
+    for (let index = 0; index < choice.length; index++) {
       if (orientation) {
-        shipPosition.push(`${index}${column}`);
+        shipPosition.push(`${choice[index]}${column}`);
+        ship.positionTaken[`${choice[index]}${column}`] = true;
       } else {
-        shipPosition.push(`${row}${index}`);
+        shipPosition.push(`${row}${choice[index]}`);
+        ship.positionTaken[`${row}${choice[index]}`] = true;
       }
-      ship.positionTaken[`${index}${column}`] = true;
     }
     ship.shipPositions[shipNumber].location = shipPosition;
   },
 };
-const positions = [];
 
 const grid = document.querySelector(".grid");
 const inputField = document.querySelector("input");
@@ -157,13 +159,11 @@ const view = {
   },
 };
 
-
-
 button.addEventListener("click", function (e) {
   e.preventDefault();
 
   const value = view.checkInput(inputField.value);
-  if(!value){
+  if (!value) {
     return false;
   }
   inputField.value = "";
@@ -202,3 +202,4 @@ ship.generateLocations(0);
 ship.generateLocations(1);
 ship.generateLocations(2);
 view.generateGrid();
+console.log(ship.shipPositions)
