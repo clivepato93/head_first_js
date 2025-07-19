@@ -17,7 +17,16 @@ const ship = {
     { location: [], hits: [] },
     { location: [], hits: [] },
   ],
-  positionTaken: {},
+  availablePositions: [],
+  positionTaken:{},
+  createPositions(){
+    for (let i = 0; i < 7; i++) {
+      for (let j = 0; j < 7; j++) {
+     this.availablePositions.push(`${i}${j}`)
+      }
+      
+    }
+  },
   checkPositionIsTaken(position) {
     return !!this.positionTaken[position];
   },
@@ -82,16 +91,15 @@ const ship = {
     let positions = ship.generatePositions(orientation, row, column) ;
 
     for (attempts; attempts < 50; attempts++) {
-      console.log(attempts)
-      console.log({orientation,row,column,shipNumber}
-      )
+      // console.log({orientation,row,column,shipNumber}
+      // )
       if (!positions &&attempts == 49) {
         alert('unable to positions ships reloading the board')
         window.location.reload();
       }
       if (positions) break;
-      else if (ship.checkPositionIsTaken(row, column)) {
-        orientation = Math.floor(Math.random() * 2);
+      else if (!attempts && ship.checkPositionIsTaken(row, column)) {
+        orientation = Number(!orientation);
         row = Math.floor(Math.random() * 7);
         column = Math.floor(Math.random() * 7);
       } else {
@@ -102,11 +110,18 @@ const ship = {
     const shipPosition = [];
     for (let index = 0; index < choice.length; index++) {
       if (orientation) {
-        shipPosition.push(`${choice[index]}${column}`);
-        ship.positionTaken[`${choice[index]}${column}`] = true;
+        const number = choice[index]
+        const position = this.availablePositions.indexOf(`${number}${column}`)
+        shipPosition.push(`${number}${column}`);
+        ship.availablePositions.splice(position,1)
+                ship.positionTaken[`${number}${column}`] = true
+
       } else {
-        shipPosition.push(`${row}${choice[index]}`);
-        ship.positionTaken[`${row}${choice[index]}`] = true;
+        const number = choice[index]
+      const position = this.availablePositions.indexOf(`${row}${number}`)
+        shipPosition.push(`${row}${number}`);
+        ship.availablePositions.splice(position,1)
+        ship.positionTaken[`${row}${number}`] = true
       }
     }
     ship.shipPositions[shipNumber].location = shipPosition;
@@ -197,7 +212,8 @@ button.addEventListener("click", function (e) {
     return;
   }
 });
-
+ship.createPositions();
+console.log(ship.availablePositions)
 ship.generateLocations(0);
 ship.generateLocations(1);
 ship.generateLocations(2);
